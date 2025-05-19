@@ -1,0 +1,156 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Dashboard</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+    <style>
+        body {
+            margin: 0;
+            font-family: Arial, sans-serif;
+            background-color: #f6f8fa;
+        }
+        .container {
+            display: flex;
+            min-height: 100vh;
+        }
+        .sidebar {
+            width: 250px;
+            background-color: #333;
+            color: white;
+            padding: 20px;
+            transition: all 0.3s;
+        }
+        .sidebar.hidden {
+            margin-left: -250px;
+        }
+        .sidebar a {
+            color: white;
+            text-decoration: none;
+            display: block;
+            padding: 10px 0;
+            font-size: 16px;
+        }
+        .sidebar a:hover {
+            background-color: #555;
+            border-radius: 5px;
+            padding-left: 10px;
+        }
+        .topbar {
+            background-color: #007bff;
+            color: white;
+            padding: 10px 20px;
+            display: flex;
+            align-items: center;
+        }
+        .hamburger {
+            font-size: 24px;
+            cursor: pointer;
+            margin-right: 20px;
+        }
+        .content {
+            flex-grow: 1;
+            padding: 30px;
+            background-color: #fff;
+        }
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            background: #fff;
+        }
+        th, td {
+            padding: 12px;
+            text-align: left;
+            border-bottom: 1px solid #ddd;
+        }
+        th {
+            background-color: #eee;
+        }
+        a.action-link {
+            color: #007bff;
+        }
+        a.action-link:hover {
+            text-decoration: underline;
+        }
+    </style>
+    <script>
+        function toggleSidebar() {
+            document.getElementById('sidebar').classList.toggle('hidden');
+        }
+    </script>
+</head>
+<body>
+
+    <!-- Topbar -->
+    <div class="topbar">
+        <span class="hamburger" onclick="toggleSidebar()">☰</span>
+        <h2 style="margin: 0;">Welcome, {{ session['username'] }}</h2>
+    </div>
+
+    <div class="container">
+        <!-- Sidebar Panel -->
+        <div id="sidebar" class="sidebar">
+            <h3>Navigation</h3>
+            <a href="/create_ticket">+ Create Ticket</a>
+            <a href="/my_tickets">My Tickets</a>
+            <a href="/approval_tickets">Approval Tickets</a>
+            <a href="/four_eyes_tickets">Four Eyes Tickets</a>
+            <a href="/all_tickets">All Tickets</a> <!-- ✅ New Button -->
+            <a href="/logout">Logout</a>
+        </div>
+          
+
+        <!-- Main Content -->
+        <div class="content">
+
+            <h3 id="my-tickets">My Requested Tickets:</h3>
+            {% if my_requested_tickets %}
+            <table>
+                <tr>
+                    <th>Ticket ID</th>
+                    <th>Title</th>
+                    <th>Status</th>
+                    <th>Actions</th>
+                </tr>
+                {% for ticket in my_requested_tickets %}
+                <tr>
+                    <td>{{ ticket.ticket_id }}</td>
+                    <td><a class="action-link" href="/view_ticket/{{ ticket.ticket_id }}">{{ ticket.title }}</a></td>
+                    <td>{{ ticket.ticket_status }}</td>
+                    <td><a class="action-link" href="/edit_ticket/{{ ticket.ticket_id }}">Edit</a></td>
+                </tr>
+                {% endfor %}
+            </table>
+            {% else %}
+                <p>No tickets created by you.</p>
+            {% endif %}
+
+            <hr>
+
+            <h3 id="approval-tickets">Tickets Awaiting My Approval:</h3>
+            {% if my_approval_tickets %}
+            <table>
+                <tr>
+                    <th>Ticket ID</th>
+                    <th>Title</th>
+                    <th>Status</th>
+                    <th>Actions</th>
+                </tr>
+                {% for ticket in my_approval_tickets %}
+                <tr>
+                    <td>{{ ticket.ticket_id }}</td>
+                    <td><a class="action-link" href="/view_ticket/{{ ticket.ticket_id }}">{{ ticket.title }}</a></td>
+                    <td>{{ ticket.ticket_status }}</td>
+                    <td><a class="action-link" href="/view_ticket/{{ ticket.ticket_id }}">Approve/Reject</a></td>
+                </tr>
+                {% endfor %}
+            </table>
+            {% else %}
+                <p>No tickets awaiting your approval.</p>
+            {% endif %}
+
+        </div>
+    </div>
+
+</body>
+</html>

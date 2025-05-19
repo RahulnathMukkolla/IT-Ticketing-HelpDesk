@@ -1,0 +1,164 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+    <title>Create Ticket</title>
+</head>
+<body>
+    <h2>Create Ticket</h2>
+
+    <form action="/create_ticket" method="POST">
+        <!-- Requester Name (Auto-populated) -->
+        <label for="requester_name">Requester Name:</label><br>
+        <input type="text" id="requester_name" name="requester_name" value="{{ requester_name }}" readonly><br><br>
+
+        <!-- Title -->
+        <label for="title">Ticket Title:</label><br>
+        <input type="text" id="title" name="title" required><br><br>
+
+        <!-- Description -->
+        <label for="description">Description:</label><br>
+        <textarea id="description" name="description" required></textarea><br><br>
+
+        <!-- Change Type -->
+        <label for="change_type_id">Change Type:</label><br>
+        <select name="change_type_id" required>
+            {% for change_type in change_types %}
+                <option value="{{ change_type.type_id }}">{{ change_type.type_name }}</option>
+            {% endfor %}
+        </select><br><br>
+
+        <!-- Status -->
+        <label for="status_id">Status:</label><br>
+        <select name="status_id" required>
+            {% for status in statuses %}
+                <option value="{{ status.status_id }}">{{ status.status_name }}</option>
+            {% endfor %}
+        </select><br><br>
+
+        <!-- Deployment Environment -->
+        <label for="env_id">Deployment Environment:</label><br>
+        <select name="env_id" required>
+            {% for env in environments %}
+                <option value="{{ env.env_id }}">{{ env.env_name }}</option>
+            {% endfor %}
+        </select><br><br>
+
+        <!-- Country -->
+        <label for="country_id">Country:</label><br>
+        <select name="country_id" required>
+            {% for country in countries %}
+                <option value="{{ country.country_id }}">{{ country.country_name }}</option>
+            {% endfor %}
+        </select><br><br>
+
+        <!-- Risk Level -->
+        <label for="risk_id">Risk Level:</label><br>
+        <select name="risk_id" required>
+            {% for risk in risks %}
+                <option value="{{ risk.risk_id }}">{{ risk.risk_name }}</option>
+            {% endfor %}
+        </select><br><br>
+
+        <!-- Change Category -->
+        <label for="change_category_id">Change Category:</label><br>
+        <select name="change_category_id" required>
+            {% for category in change_categories %}
+                <option value="{{ category.category_id }}">{{ category.category_name }}</option>
+            {% endfor %}
+        </select><br><br>
+
+        <!-- Department (Pre-selected based on user) -->
+        <label for="department_id">Department:</label><br>
+        <input type="text" id="department_id" name="department_id" value="{{ department_name }}" readonly><br><br>
+
+        <!-- Deployment Team -->
+        <label for="deployment_team_id">Deployment Team:</label><br>
+        <select name="deployment_team_id" required>
+            {% for team in departments %}
+                <option value="{{ team.department_id }}">{{ team.name }}</option>
+            {% endfor %}
+        </select><br><br>
+
+        <!-- Implementation Start -->
+        <label for="implementation_start">Implementation Start (Optional):</label><br>
+        <input type="datetime-local" id="implementation_start" name="implementation_start"><br><br>
+
+        <!-- Implementation End -->
+        <label for="implementation_end">Implementation End (Optional):</label><br>
+        <input type="datetime-local" id="implementation_end" name="implementation_end"><br><br>
+
+        <!-- Assigned PIV (User to approve task) -->
+        <label for="assigned_piv">Assigned PIV:</label><br>
+        <select name="assigned_piv" required>
+            {% for user in users %}
+                <option value="{{ user.user_id }}">{{ user.username }}</option>
+            {% endfor %}
+        </select><br><br>
+
+        <!-- Project Manager -->
+        <label for="project_manager_id">Project Manager:</label><br>
+        <select name="project_manager_id" required>
+            {% for manager in users %}
+                <option value="{{ manager.user_id }}">{{ manager.username }}</option>
+            {% endfor %}
+        </select><br><br>
+
+        <!-- Category -->
+        <label for="category_id">Ticket Category:</label><br>
+        <select name="category_id" required>
+            {% for category in categories %}
+                <option value="{{ category.category_id }}">{{ category.name }}</option>
+            {% endfor %}
+        </select><br><br>
+
+        <label for="cab_approvers">Select CAB Approvers:</label><br>
+
+        <div id="cab_approvers_container">
+            <div class="cab-approver-row">
+                <select name="cab_approvers" required>
+                    {% for user in users %}
+                        <option value="{{ user.user_id }}">{{ user.username }}</option>
+                    {% endfor %}
+                </select>
+            </div>
+        </div>
+        
+        <button type="button" onclick="addCabApprover()">+ Add Another Approver</button>
+        
+        <br><br>
+        
+        <script>
+        function addCabApprover() {
+            var container = document.getElementById('cab_approvers_container');
+            var newRow = document.createElement('div');
+            newRow.classList.add('cab-approver-row');
+            newRow.innerHTML = `
+                <select name="cab_approvers" required>
+                    {% for user in users %}
+                        <option value="{{ user.user_id }}">{{ user.username }}</option>
+                    {% endfor %}
+                </select>
+            `;
+            container.appendChild(newRow);
+        }
+        </script>
+        
+
+        <!-- Select Four Eyes Approver -->
+        <label for="four_eyes_approver">Select Four Eyes Approver:</label><br>
+        <select name="four_eyes_approver" required>
+            {% for user in users %}
+                <option value="{{ user.user_id }}">{{ user.username }}</option>
+            {% endfor %}
+        </select><br><br>
+
+
+        <button type="submit">Create Ticket</button>
+    </form>
+
+    <a href="/dashboard">Back to Dashboard</a>
+</body>
+</html>

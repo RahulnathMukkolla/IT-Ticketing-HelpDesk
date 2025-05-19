@@ -1,0 +1,10 @@
+DELIMITER //
+
+CREATE TRIGGER trg_update_ticket_timestamp
+BEFORE UPDATE ON sd_tickets
+FOR EACH ROW
+BEGIN
+    SET NEW.updated_at = CURRENT_TIMESTAMP;
+END //
+
+DELIMITER ;

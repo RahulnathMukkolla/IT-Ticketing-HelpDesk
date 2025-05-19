@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+    <title>Edit Ticket - {{ ticket.title }}</title>
+</head>
+<body>
+
+    <h2>Ticket Details</h2>
+
+    {% if can_edit %}
+    <form action="/edit_ticket/{{ ticket.ticket_id }}" method="POST">
+        {% if can_full_edit %}
+            <!-- Full edit form for Requester -->
+            <label>Title:</label><br>
+            <input type="text" name="title" value="{{ ticket.title }}" required><br><br>
+
+            <label>Description:</label><br>
+            <textarea name="description" required>{{ ticket.description }}</textarea><br><br>
+
+            <label>Status:</label><br>
+            <select name="status_id" required>
+                {% for status in statuses %}
+                    <option value="{{ status.status_id }}" {% if status.status_id == ticket.status_id %}selected{% endif %}>
+                        {{ status.status_name }}
+                    </option>
+                {% endfor %}
+            </select><br><br>
+
+            <button type="submit">Save Changes</button>
+
+        {% elif can_approve %}
+            <!-- Approve/Reject form for CAB -->
+            <label>Approval Decision:</label><br>
+            <select name="approval_status_id" required>
+                <option value="2">Approve</option>
+                <option value="3">Reject</option>
+            </select><br><br>
+
+            <label>Approval Comment:</label><br>
+            <textarea name="comment" required></textarea><br><br>
+
+            <button type="submit">Submit Approval</button>
+        {% endif %}
+    </form>
+
+    {% else %}
+        <!-- Only view if not allowed to edit -->
+        <ul>
+            <li><strong>Title:</strong> {{ ticket.title }}</li>
+            <li><strong>Description:</strong> {{ ticket.description }}</li>
+            <li><strong>Status:</strong> {{ ticket.status_id }}</li>
+            <!-- You can also show other fields if needed -->
+        </ul>
+    {% endif %}
+
+    <br><a href="/view_ticket/{{ ticket.ticket_id }}">Back to Ticket</a>
+
+</body>
+</html>
